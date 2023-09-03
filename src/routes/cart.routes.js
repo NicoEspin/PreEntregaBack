@@ -2,7 +2,7 @@ import express from "express";
 import { CartManager, Cart } from "../js/cartManager.js";
 
 const cartsRouter = express.Router();
-const cartManager = new CartManager("../mocks/carts.json");
+const cartManager = new CartManager("./src/mocks/carts.json");
 
 cartsRouter.post("/", async (req, res) => {
   try {
@@ -13,11 +13,18 @@ cartsRouter.post("/", async (req, res) => {
     res.status(500).json({ error: "Error al crear el carrito." });
   }
 });
+cartsRouter.get("/", async (req, res) => {
+  try {
+    const carts = await cartManager.getCarts(); 
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los carritos." });
+  }
+});
 
 cartsRouter.get("/:cid", async (req, res) => {
   const { cid } = req.params;
   try {
-    const cart = await cartManager.getCartById(cid);
+    const cart = await cartManager.getCartById(parseInt(cid));
 
     const cartProducts = cart.products;
     res.json(cartProducts);
@@ -30,7 +37,7 @@ cartsRouter.post("/:cid/product/:pid", async (req, res) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body;
   try {
-    const cart = await cartManager.getCartById(cid);
+    const cart = await cartManager.getCartById(parseInt(cid));
 
     const existingProductIndex = cart.products.findIndex(
       (item) => item.id === pid

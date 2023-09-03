@@ -51,6 +51,14 @@ class Cart {
   constructor() {
     this.products = [];
   }
+  static idGenerate() {
+    if (!this.idIncrement) {
+      this.idIncrement = 1;
+    } else {
+      this.idIncrement++;
+    }
+    return this.idIncrement;
+  }
 }
 
 export { CartManager, Cart };
